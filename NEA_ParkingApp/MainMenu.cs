@@ -1,0 +1,55 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+using System.Runtime.CompilerServices;
+
+namespace NEA_ParkingApp
+{
+    public partial class MainMenu : Form
+    {
+
+        Account account;
+
+        public MainMenu(Account UserAccount) // receive account details from signup/login form
+        {
+            InitializeComponent();
+            account = UserAccount;
+
+            this.WelcomeLabel.Text = "Welcome, " + account.forename.Trim() + "!"; // Display welcome message
+        }
+
+        private void MainMenu_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BookingCreate_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            // Open Booking form
+
+            BookingCreationForm bookingForm = new BookingCreationForm(account);
+            bookingForm.Location = this.Location;
+            bookingForm.Show();
+
+            this.Close();
+        }
+
+        private void MapButton_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            // Open Virtual Map
+
+            VirtualMap map = new VirtualMap();
+            map.Location = this.Location;
+            map.Show();
+
+
+        }
+    }
+}
