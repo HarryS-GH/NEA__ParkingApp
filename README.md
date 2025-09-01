@@ -4,7 +4,7 @@ This is currently a demo version of the parking app
 
 Current features include:
 
-Account creation
+Account creation\n
 Login Screen
 Menu Screen
 Booking Creation
