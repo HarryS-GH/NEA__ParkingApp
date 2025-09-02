@@ -78,6 +78,7 @@
             ViewBookings.TabIndex = 3;
             ViewBookings.TabStop = true;
             ViewBookings.Text = "View my Bookings";
+            ViewBookings.LinkClicked += ViewBookings_LinkClicked;
             // 
             // MapButton
             // 

@@ -51,5 +51,14 @@ namespace NEA_ParkingApp
 
 
         }
+
+        private void ViewBookings_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            BookingView view = new BookingView(account);
+            view.Location = this.Location;
+            view.Show();
+
+            this.Close();
+        }
     }
 }
