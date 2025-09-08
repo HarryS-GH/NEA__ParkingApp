@@ -199,17 +199,18 @@ namespace NEA_ParkingApp
             }
         }
 
-        private void TogglePasswordShow(TextBox passwordBox, LinkLabel link)
+        private void TogglePasswordShow(TextBox passBox, LinkLabel triggerButton)
         {
-            if (passwordBox.UseSystemPasswordChar)
+
+            if (passBox.PasswordChar == '*')
             {
-                passwordBox.UseSystemPasswordChar = false;
-                link.Text = "Hide"; 
+                triggerButton.Text = "Hide";
+                passBox.PasswordChar = '\0';
             }
             else
             {
-                passwordBox.UseSystemPasswordChar = true;
-                link.Text = "Show";
+                triggerButton.Text = "Show";
+                passBox.PasswordChar = '*';
             }
         }
 
