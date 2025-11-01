@@ -40,6 +40,9 @@
             ViewSpaceButton = new Button();
             CreateBooking = new Button();
             CloseButton = new Button();
+            basePrice = new Label();
+            discount = new Label();
+            totalPrice = new Label();
             SuspendLayout();
             // 
             // DatePicker
@@ -166,11 +169,44 @@
             CloseButton.UseVisualStyleBackColor = true;
             CloseButton.Click += CloseButton_Click;
             // 
+            // basePrice
+            // 
+            basePrice.AutoSize = true;
+            basePrice.Font = new Font("SimSun", 15F);
+            basePrice.Location = new Point(32, 802);
+            basePrice.Name = "basePrice";
+            basePrice.Size = new Size(268, 30);
+            basePrice.TabIndex = 12;
+            basePrice.Text = "Base Price: £0.00";
+            // 
+            // discount
+            // 
+            discount.AutoSize = true;
+            discount.Font = new Font("SimSun", 15F);
+            discount.Location = new Point(32, 844);
+            discount.Name = "discount";
+            discount.Size = new Size(433, 30);
+            discount.TabIndex = 13;
+            discount.Text = "Default Discount (0%): £0.00";
+            // 
+            // totalPrice
+            // 
+            totalPrice.AutoSize = true;
+            totalPrice.Font = new Font("SimSun", 15F);
+            totalPrice.Location = new Point(32, 888);
+            totalPrice.Name = "totalPrice";
+            totalPrice.Size = new Size(193, 30);
+            totalPrice.TabIndex = 14;
+            totalPrice.Text = "Total: £0.00";
+            // 
             // BookingCreationForm
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1080, 1138);
+            Controls.Add(totalPrice);
+            Controls.Add(discount);
+            Controls.Add(basePrice);
             Controls.Add(CloseButton);
             Controls.Add(CreateBooking);
             Controls.Add(ViewSpaceButton);
@@ -203,5 +239,8 @@
         private Button ViewSpaceButton;
         private Button CreateBooking;
         private Button CloseButton;
+        private Label basePrice;
+        private Label discount;
+        private Label totalPrice;
     }
 }

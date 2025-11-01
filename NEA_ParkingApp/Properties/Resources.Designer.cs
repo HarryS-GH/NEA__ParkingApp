@@ -59,15 +59,5 @@ namespace NEA_ParkingApp.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap arctic_gryphon_release {
-            get {
-                object obj = ResourceManager.GetObject("arctic-gryphon-release", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
     }
 }

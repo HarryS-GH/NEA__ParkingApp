@@ -17,7 +17,7 @@ using System.Data.SqlClient;
 // No fields can be empty.
 
 // Username - Between 5 and 50 characters inclusive. Cannot contain spaces. Cannot contain special characters.
-// Passsword - Between 10 and 50 characters inclusive. Cannot contain spaces. Must include at least 1 number, with a mix of uppercase and lowercase. 
+// Password - Between 10 and 50 characters inclusive. Cannot contain spaces. Must include at least 1 number, with a mix of uppercase and lowercase. 
 // Confirm password - Must match the password entered above. Cannot be shown, so the user must be able to reproduce their own password.
 
 // Forename - 25 characters max.
@@ -37,10 +37,13 @@ namespace NEA_ParkingApp
         private Point ERROR_START_POS = new Point(23, 769);
         private List<Label> ActiveErrors = new List<Label>();
 
+
+
         public SignupForm()
         {
             InitializeComponent();
             UpdatePasskeyFuncs();
+
         }
 
         // Validates user's inputs according to the signup specifications starting at Line 13
@@ -169,7 +172,43 @@ namespace NEA_ParkingApp
                 Security.CreateErrorMessage("Name fields cannot exceed 25 characters.", this, ERROR_START_POS, ActiveErrors);
             }
 
-            // ------------------------------------------------------------------------------------------------------------------------------ //
+            // Validate Tier Passkey ----------------------------------------------------------------------------------------------- //
+
+            Debug.WriteLine(TierKeyBox.Text);
+            Debug.WriteLine(AccountTier.Text);
+            if (AccountTier.Text == "Staff" || AccountTier.Text == "Admin")
+            {
+                string getKeys = "SELECT KeyID FROM ACCOUNT_KEYS WHERE KeyString = @key AND AccountType = @tier";
+
+                try
+                {               
+
+                    using (SqlConnection conn = new SqlConnection(Security.connectionString))
+                    {
+                        conn.Open();
+
+                        using (SqlCommand cmd = new SqlCommand(getKeys, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@key", TierKeyBox.Text);
+                            cmd.Parameters.AddWithValue("@tier", AccountTier.Text.ToUpper());
+
+                            var validKeys = cmd.ExecuteScalar();
+
+                            if (validKeys == null)
+                            {
+                                validInputs = false;
+                                Security.CreateErrorMessage("Invalid tier passkey was entered.", this, ERROR_START_POS, ActiveErrors);
+
+                            }
+
+                        }
+                    }
+                }
+                catch
+                {
+                    Security.CreateErrorMessage("An error occured whilst verifying your account tier passkey. Please try again.", this, ERROR_START_POS, ActiveErrors);
+                }
+            }
 
             return validInputs;
         }
@@ -269,7 +308,7 @@ namespace NEA_ParkingApp
                                     string surname = reader["Surname"].ToString();
                                     string tier = reader["AccountTier"].ToString();
 
-                                    Account userAccount = new Account(accountID, username, password, tier, forename, surname); // Create account object
+                                    Account userAccount = CarParkConfiguration.CreateAccount(accountID, username, password, forename, surname, tier);
 
                                     MainMenu menuForm = new MainMenu(userAccount);
                                     menuForm.Location = this.Location;

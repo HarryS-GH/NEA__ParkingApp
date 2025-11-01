@@ -59,7 +59,6 @@
             InstructionLabel.TabIndex = 2;
             InstructionLabel.Text = "Please fill in the following fields to create a new account:";
             InstructionLabel.TextAlign = ContentAlignment.MiddleCenter;
-
             // 
             // PassLabel
             // 

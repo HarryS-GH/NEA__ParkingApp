@@ -17,12 +17,14 @@ namespace NEA_ParkingApp
 
         Account account;
 
+
         public MainMenu(Account UserAccount) // receive account details from signup/login form
         {
             InitializeComponent();
             account = UserAccount;
 
             this.WelcomeLabel.Text = "Welcome, " + account.forename.Trim() + "!"; // Display welcome message
+
         }
 
         private void MainMenu_Load(object sender, EventArgs e)
@@ -30,7 +32,7 @@ namespace NEA_ParkingApp
 
         }
 
-        private void BookingCreate_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void BookingCreate_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) // Opens the booking creation form
         {
             // Open Booking form
 
@@ -41,7 +43,7 @@ namespace NEA_ParkingApp
             this.Close();
         }
 
-        private void MapButton_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void MapButton_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) // Opens the virtual map form
         {
             // Open Virtual Map
 
@@ -52,13 +54,18 @@ namespace NEA_ParkingApp
 
         }
 
-        private void ViewBookings_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void ViewBookings_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) // Opens the booking viewing form
         {
             BookingView view = new BookingView(account);
             view.Location = this.Location;
             view.Show();
 
             this.Close();
+        }
+
+        private void LogoutLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) // Closes the whole application when the user logs out
+        {
+            Application.Exit();
         }
     }
 }

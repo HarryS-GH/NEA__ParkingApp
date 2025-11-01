@@ -102,6 +102,7 @@
             LogoutLink.TabIndex = 5;
             LogoutLink.TabStop = true;
             LogoutLink.Text = "Log Out";
+            LogoutLink.LinkClicked += LogoutLink_LinkClicked;
             // 
             // MainMenu
             // 

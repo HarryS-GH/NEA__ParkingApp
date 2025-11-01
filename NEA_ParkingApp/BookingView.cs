@@ -93,7 +93,11 @@ namespace NEA_ParkingApp
 
             if (selected.Tag as Booking != null)
             {
+                BookingCreationForm editForm = new BookingCreationForm(Account, selected.Tag as Booking); // Open the booking creation form in the context of editing
+                editForm.Location = this.Location;
+                editForm.Show();
 
+                this.Close();
             }
         }
 

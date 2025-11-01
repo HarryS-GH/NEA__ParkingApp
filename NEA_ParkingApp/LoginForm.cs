@@ -1,5 +1,6 @@
-using System.Diagnostics;
+using Microsoft.VisualBasic.ApplicationServices;
 using System.Data.SqlClient;
+using System.Diagnostics;
 
 namespace NEA_ParkingApp
 {
@@ -73,7 +74,9 @@ namespace NEA_ParkingApp
                             string surname = reader["Surname"].ToString();
                             string tier = reader["AccountTier"].ToString();
 
-                            Account userAccount = new Account(accountID, username, password, tier, forename, surname);
+                            Account userAccount = CarParkConfiguration.CreateAccount(accountID,username,password,forename,surname,tier);
+
+                            Debug.WriteLine(userAccount.AccountTier);
 
                             this.Hide();
 

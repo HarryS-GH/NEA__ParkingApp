@@ -29,7 +29,13 @@ namespace NEA_ParkingApp
         DateTime Start;
         DateTime End;
 
+        double bookingPrice;
+
         Space UserSelectedSpace;
+
+        Booking editing; 
+
+
 
         List<Space> Spaces = new List<Space>(); // List of available spaces
 
@@ -49,6 +55,35 @@ namespace NEA_ParkingApp
             StartTime_Picker.Value = DateTime.Now.AddMinutes(30); // Set start time to the current time, plus 30 minutes (still has seconds data, but custom format will ignore it - will be trimmed before storing)
             EndTime_Picker.Value = DateTime.Now.AddMinutes(60); // Set end time to the current time, plus an hour (seconds data same as above ^ )
 
+
+
+            this.discount.Text = account.AccountTier.ToString() + " Discount (" + (100 - (100 * account.CostMultiplier)) + "%): £0.00";
+
+        }
+
+        public BookingCreationForm(Account Useraccount, Booking bookingToEdit) // For editing bookings
+        {
+            InitializeComponent();
+
+            account = Useraccount;
+            editing = bookingToEdit;
+
+            // Initialise the time pickers with values relevent to the user
+
+            BookingDate_Picker = this.DatePicker;
+            StartTime_Picker = this.StartTimePicker;
+            EndTime_Picker = this.EndTimePicker;
+
+            BookingDate_Picker.Value = editing.startTime.Date; // Grab the time values from the current booking
+            StartTime_Picker.Value = editing.startTime; 
+            EndTime_Picker.Value = editing.endTime; 
+
+            
+
+            this.CreateBooking.Text = "Update Booking";
+            this.CloseButton.Text = "Cancel";
+
+            this.discount.Text = account.AccountTier.ToString() + " Discount (" + (100 - (100 * account.CostMultiplier)) + "%): £0.00";
         }
 
         private DateTime RemoveSeconds(DateTime time) // Method to truncate the seconds off of inputted DateTime values, as seconds will be discarded when stored
@@ -89,6 +124,8 @@ namespace NEA_ParkingApp
             this.SelectedSpace.Text = "Selected Space: " + this.AvailableSpaces.SelectedItem.ToString();
             string spaceString = this.AvailableSpaces.SelectedItem.ToString();
 
+            CalculatePrice();
+
             Debug.WriteLine("Changed to " + spaceString);
 
             using (SqlConnection conn = new SqlConnection(Security.connectionString)) // Create a space object using the spaceID taken from the list
@@ -126,10 +163,16 @@ namespace NEA_ParkingApp
             if (UserSelectedSpace != null)
             {
                 this.ViewSpaceButton.Visible = true;
+
+                CalculatePrice();
             }
             else
             {
                 this.ViewSpaceButton.Visible = false;
+
+                this.basePrice.Text = "Base Price: £0.00";
+                this.discount.Text = account.AccountTier.ToString() + " Discount (" + (100 - (100 * account.CostMultiplier)) + "%): £0.00";
+                this.totalPrice.Text = "Total: £0.00";
             }
         }
 
@@ -184,6 +227,20 @@ namespace NEA_ParkingApp
             return tempSpaces;
         }
 
+        private void CalculatePrice()
+        {
+            TimeSpan duration = EndTimePicker.Value - StartTime_Picker.Value;
+            double initialPrice = duration.TotalHours * CarParkConfiguration.COST_PER_HOUR;
+            double discountedPrice = initialPrice * account.CostMultiplier;
+
+            initialPrice = Math.Round(initialPrice, 2);
+            discountedPrice = Math.Round(discountedPrice, 2);
+
+            this.basePrice.Text = "Base Price: £" + initialPrice;
+            this.discount.Text = account.AccountTier.ToString() + " Discount (" + (100-(100*account.CostMultiplier)) + "%): £" + discountedPrice;
+            this.totalPrice.Text = "Total: £" + discountedPrice;
+
+        }
         private void FindSpaces_Click(object sender, EventArgs e) // Find available spaces within the given timeframe and display them to the user
         {
 
@@ -223,53 +280,85 @@ namespace NEA_ParkingApp
             DateTime ArrivalTime = RemoveSeconds(SelectedDay + StartTimePicker.Value.TimeOfDay); // Get the user's selected arrival time to store in database
             DateTime LeavingTime = RemoveSeconds(SelectedDay + EndTimePicker.Value.TimeOfDay); // Get the user's selected departure time to store in database
 
-            string addBookingSQL = "INSERT INTO BookingInfo (SpaceID, StartTime, EndTime, UserID) VALUES (@spaceid, @starttime, @endtime, @userid)";
-
-            try
+            if (editing == null)
             {
-                using (SqlConnection conn = new SqlConnection(Security.connectionString))
+                string addBookingSQL = "INSERT INTO BookingInfo (SpaceID, StartTime, EndTime, UserID) VALUES (@spaceid, @starttime, @endtime, @userid)";
+
+                try
                 {
-
-                    conn.Open();
-
-                    using (SqlCommand cmd = new SqlCommand(addBookingSQL, conn))
+                    using (SqlConnection conn = new SqlConnection(Security.connectionString))
                     {
-                        cmd.Parameters.AddWithValue("@spaceid", UserSelectedSpace.SpaceID);
-                        cmd.Parameters.AddWithValue("@starttime", ArrivalTime);
-                        cmd.Parameters.AddWithValue("@endtime", LeavingTime);
-                        cmd.Parameters.AddWithValue("@userid", account.userID);
 
-                        cmd.ExecuteNonQuery(); // Add the user's booking to database
+                        conn.Open();
 
+                        using (SqlCommand cmd = new SqlCommand(addBookingSQL, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@spaceid", UserSelectedSpace.SpaceID);
+                            cmd.Parameters.AddWithValue("@starttime", ArrivalTime);
+                            cmd.Parameters.AddWithValue("@endtime", LeavingTime);
+                            cmd.Parameters.AddWithValue("@userid", account.userID);
+
+                            cmd.ExecuteNonQuery(); // Add the user's booking to database
+
+                        }
                     }
+
+                    Debug.WriteLine("Booking created successfully.");
+
+                    
+                        MessageBox.Show(
+
+                             "Booking created successfully.",
+                             "Booking Confirmation",
+
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information
+
+                         );
+                    
+                    
+
                 }
-
-                Debug.WriteLine("Booking created successfully.");
-
-                MessageBox.Show(
-
-                    "Booking created successfully.",
-                    "Booking Confirmation",
-
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information
-
-                    );
+                catch
+                {
+                    Security.CreateErrorMessage("An error was encountered whilst creating the booking. Please try again later.", this, ERROR_START_POS, ActiveErrors);
+                }
             }
-            catch
+            else
             {
-                Security.CreateErrorMessage("An error was encountered whilst creating the booking. Please try again later.", this, ERROR_START_POS, ActiveErrors);
+                editing.Edit(UserSelectedSpace.SpaceID, ArrivalTime, LeavingTime);
+
+                BookingView viewForm = new BookingView(account);
+                viewForm.Location = this.Location;
+                viewForm.Show();
+
+                this.Close();
             }
+
+            
 
         }
 
         private void CloseButton_Click(object sender, EventArgs e)
         {
-            MainMenu form = new MainMenu(account);
-            form.Location = this.Location;
-            form.Show();
 
-            this.Close();
+            if (editing == null)
+            {
+
+                MainMenu form = new MainMenu(account);
+                form.Location = this.Location;
+                form.Show();
+
+                this.Close();
+            }
+            else
+            {
+                BookingView viewForm = new BookingView(account);
+                viewForm.Location = this.Location;
+                viewForm.Show();
+
+                this.Close();
+            }
         }
     }
 }

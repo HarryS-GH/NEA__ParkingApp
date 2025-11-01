@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace NEA_ParkingApp
 {
-    internal class Booking
+    public class Booking
     {
 
         public int bookingID { get; }
