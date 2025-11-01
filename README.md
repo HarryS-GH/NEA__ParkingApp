@@ -11,13 +11,13 @@ Booking Creation,
 Virtual Map (Pathfinding, offers a locked mode and a browse mode) (Currently using a demo map layout),
 Booking Viewing,
 Booking Cancelling,
-All Databases Established
+All Databases Established,
+Booking Editing,
+Booking Pricing,
+Account Type Passkeys
 
 # Upcoming features include:
 
-Booking Pricing, 
-Account Type Passkeys, 
-Booking Editing,
 Account Settings Viewing/Editing
 
 # User Interface may be polished in the future
