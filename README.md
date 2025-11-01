@@ -19,5 +19,8 @@ Account Type Passkeys
 # Upcoming features include:
 
 Account Settings Viewing/Editing
+Final map layout
+? - Username generation
+? - Personally-made hashing for passwords
 
 # User Interface may be polished in the future
